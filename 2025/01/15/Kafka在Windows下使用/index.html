@@ -1,0 +1,348 @@
+<!DOCTYPE html><html lang="cn" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Kafka在Windows下使用 | XiWei</title><meta name="author" content="XiWei"><meta name="copyright" content="XiWei"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Kafka在Windows下使用 1. 下载安装进入官网下载tgz结尾的包，这里我选择3.6.1版本，Scala版本为2.12解压在某个目录 由于Kafka依赖于ZooKeeper,但是ZooKeeper已经内置在这个版本的Kafka下，所以仅需要Kafka的config目录下配置zookeeper即可即配置zookeeper.properties文件 12# 修改dataDir,用于设置ZooK">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kafka在Windows下使用">
+<meta property="og:url" content="https://xi-weix.github.io/2025/01/15/Kafka%E5%9C%A8Windows%E4%B8%8B%E4%BD%BF%E7%94%A8/index.html">
+<meta property="og:site_name" content="XiWei">
+<meta property="og:description" content="Kafka在Windows下使用 1. 下载安装进入官网下载tgz结尾的包，这里我选择3.6.1版本，Scala版本为2.12解压在某个目录 由于Kafka依赖于ZooKeeper,但是ZooKeeper已经内置在这个版本的Kafka下，所以仅需要Kafka的config目录下配置zookeeper即可即配置zookeeper.properties文件 12# 修改dataDir,用于设置ZooK">
+<meta property="og:locale">
+<meta property="og:image" content="https://xi-weix.github.io/img/%E9%9B%AA%E8%8A%B1.png">
+<meta property="article:published_time" content="2025-01-15T15:30:56.000Z">
+<meta property="article:modified_time" content="2025-01-21T14:56:34.958Z">
+<meta property="article:author" content="XiWei">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://xi-weix.github.io/img/%E9%9B%AA%E8%8A%B1.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Kafka在Windows下使用",
+  "url": "https://xi-weix.github.io/2025/01/15/Kafka%E5%9C%A8Windows%E4%B8%8B%E4%BD%BF%E7%94%A8/",
+  "image": "https://xi-weix.github.io/img/%E9%9B%AA%E8%8A%B1.png",
+  "datePublished": "2025-01-15T15:30:56.000Z",
+  "dateModified": "2025-01-21T14:56:34.958Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "XiWei",
+      "url": "https://xi-weix.github.io/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://xi-weix.github.io/2025/01/15/Kafka%E5%9C%A8Windows%E4%B8%8B%E4%BD%BF%E7%94%A8/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: 'Copy Successful',
+    error: 'Copy Failed',
+    noSupport: 'Browser Not Supported'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: 'Just now',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: 'Load More'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Kafka在Windows下使用',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/beach.jpeg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="/img/%E9%9B%AA%E8%8A%B1.png" alt="Logo"><span class="site-name">XiWei</span></a><a class="nav-page-title" href="/"><span class="site-name">Kafka在Windows下使用</span></a></span><div id="menus"></div></nav><div id="post-info"><h1 class="post-title">Kafka在Windows下使用</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2025-01-15T15:30:56.000Z" title="Created 2025-01-15 23:30:56">2025-01-15</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2025-01-21T14:56:34.958Z" title="Updated 2025-01-21 22:56:34">2025-01-21</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post Views:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="Kafka在Windows下使用"><a href="#Kafka在Windows下使用" class="headerlink" title="Kafka在Windows下使用"></a>Kafka在Windows下使用</h1><p><img src="/../images/kafka_4.png"></p>
+<h2 id="1-下载安装"><a href="#1-下载安装" class="headerlink" title="1. 下载安装"></a>1. 下载安装</h2><p>进入官网<a target="_blank" rel="noopener" href="https://kafka.apache.org/downloads"></a><br>下载tgz结尾的包，这里我选择3.6.1版本，Scala版本为2.12<br><img src="/../images/kafka_1.png"><br>解压在某个目录</p>
+<p>由于Kafka依赖于ZooKeeper,但是ZooKeeper已经内置在这个版本的Kafka下，所以仅需要Kafka的config目录下配置zookeeper即可<br>即配置zookeeper.properties文件</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 修改dataDir,用于设置ZooKeeper数据存储位置，该路径如果不存在会自动创建</span></span><br><span class="line"><span class="string">dataDir</span> <span class="string">=</span> <span class="string">D:/kafka/kafka_2.12-3.6.1/data/zk</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>配置Kafka的配置文件server.properties</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">log.dirs=D:/kafka/kafka_2.12-3.6.1/data/kafka</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="2-启动软件"><a href="#2-启动软件" class="headerlink" title="2. 启动软件"></a>2. 启动软件</h2><p>启动ZooKeeper：</p>
+<p>在kafka目录下执行：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bin\windows\zookeeper-server-start.bat config\zookeeper.properties</span><br></pre></td></tr></table></figure>
+
+<p>启动kafka:</p>
+<p>同样在kafka目录下执行：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bin/windows/kafka-server-start.bat config/server.properties</span><br></pre></td></tr></table></figure>
+
+<p>执行成功后，黑窗口持续存在</p>
+<p><img src="/../images/kafka_2.png"></p>
+<p><img src="/../images/kafka_3.png" alt="afka_"></p>
+<p><strong>如果kafka启动失败，则可能是Java环境变量配置出错，如果将Java安装在”E:\Program Files (x86)”下，会导致环境变量路径出现空格，导致出错，所以，应当把Java安装在无空格路径上</strong></p>
+<h4 id="注意："><a href="#注意：" class="headerlink" title="注意："></a>注意：</h4><p>kafka不能放的文件夹过于深，否则会出现：</p>
+<p><img src="/../images/kafka_11.png"></p>
+<p>我将kafka挪到最外层就不报错了</p>
+<h3 id="快速启动"><a href="#快速启动" class="headerlink" title="快速启动"></a>快速启动</h3><p>为了后面启动方便，可以在kafka目录下创建两个文件，zk.cmd，kfk.cmd，内容分别为</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">call bin\windows\zookeeper-server-start.bat config\zookeeper.properties</span><br><span class="line">call bin/windows/kafka-server-start.bat config/server.properties</span><br></pre></td></tr></table></figure>
+
+<p>双击执行文件，同样可以启动zookeeper和kafka</p>
+<p>启动成功后，使用jps命令，可以看到两个进程：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">D:\SoftWare\kafka_2.<span class="number">12</span><span class="literal">-3</span>.<span class="number">6.1</span>&gt;jps</span><br><span class="line"><span class="number">17792</span> Jps</span><br><span class="line"><span class="number">5016</span> Kafka</span><br><span class="line"><span class="number">13548</span> Main</span><br><span class="line"><span class="number">22108</span> QuorumPeerMain</span><br></pre></td></tr></table></figure>
+
+
+
+<p>注意：启动时，先启动ZooKeeper，再启动Kafka</p>
+<p>​	   关闭时，先关闭Kafka，再关闭ZooKeeper</p>
+<h2 id="3-创建Topics"><a href="#3-创建Topics" class="headerlink" title="3. 创建Topics"></a>3. 创建Topics</h2><p>在bin&#x2F;windows下执行kafka-topics.bat </p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kafka<span class="literal">-topics</span>.bat <span class="literal">--bootstrap-server</span> localhost:<span class="number">9092</span> <span class="literal">--topic</span> test <span class="literal">--create</span></span><br></pre></td></tr></table></figure>
+
+<p>创建成功后提示：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">D:\SoftWare\kafka_2.<span class="number">12</span><span class="literal">-3</span>.<span class="number">6.1</span>\bin\windows&gt;kafka<span class="literal">-topics</span>.bat <span class="literal">--bootstrap-server</span> localhost:<span class="number">9092</span> <span class="literal">--topic</span> test <span class="literal">--create</span></span><br><span class="line">Created topic test.</span><br></pre></td></tr></table></figure>
+
+<p>在jdk8及更早版本会出现很多日志，使用新的jdk则不会出现这种情况，而是如上所示</p>
+<p>查看创建的topic：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kafka<span class="literal">-topics</span>.bat <span class="literal">--bootstrap-server</span> localhost:<span class="number">9092</span> <span class="literal">--list</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">D:\SoftWare\kafka_2.<span class="number">12</span><span class="literal">-3</span>.<span class="number">6.1</span>\bin\windows&gt;kafka<span class="literal">-topics</span>.bat <span class="literal">--bootstrap-server</span> localhost:<span class="number">9092</span> <span class="literal">--list</span></span><br><span class="line">test</span><br></pre></td></tr></table></figure>
+
+<p>查看更详细的topic：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">D:\SoftWare\kafka_2.<span class="number">12</span><span class="literal">-3</span>.<span class="number">6.1</span>\bin\windows&gt;kafka<span class="literal">-topics</span>.bat <span class="literal">--bootstrap-server</span> localhost:<span class="number">9092</span> <span class="literal">--topic</span> test <span class="literal">--describe</span></span><br><span class="line">Topic: test     TopicId: aGe4HI0oQLCHodKFiXT<span class="literal">-2w</span> PartitionCount: <span class="number">1</span>       ReplicationFactor: <span class="number">1</span>    Configs:</span><br><span class="line">        Topic: test     Partition: <span class="number">0</span>    Leader: <span class="number">0</span>       Replicas: <span class="number">0</span>     Isr: <span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+<p>同理，将最后的参数–describe换成–alter（修改），–delete（删除）</p>
+<p>但是Windows下进行delete删除会导致kafka异常关闭</p>
+<p>bin&#x2F;windows目录下执行kafka-console-producer.bat进行生产数据，kafka-console-producer.bat消费数据</p>
+<p><img src="/../images/kafka_5.png"></p>
+<p>test无数据时，不影响启动</p>
+<p><img src="/../images/kafka_6.png"></p>
+<p>producer会出现”&gt;”表示待输入数据</p>
+<p>producer生产数据后，consumer马上得到数据</p>
+<h2 id="4-Java代码实现生产者消费者"><a href="#4-Java代码实现生产者消费者" class="headerlink" title="4. Java代码实现生产者消费者"></a>4. Java代码实现生产者消费者</h2><h3 id="4-1-导入依赖包"><a href="#4-1-导入依赖包" class="headerlink" title="4.1 导入依赖包"></a>4.1 导入依赖包</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- https://mvnrepository.com/artifact/org.apache.kafka/kafka-clients --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.kafka<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>kafka-clients<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.6.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="4-2-KafkaProducer和KafkaConsumer"><a href="#4-2-KafkaProducer和KafkaConsumer" class="headerlink" title="4.2 KafkaProducer和KafkaConsumer"></a>4.2 KafkaProducer和KafkaConsumer</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">KafkaProducerTest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// TODO 创建配置对象</span></span><br><span class="line">        Map&lt;String, Object&gt; configMap = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">        configMap.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, <span class="string">&quot;localhost:9092&quot;</span>);</span><br><span class="line">        <span class="comment">// TODO 由于生产的数据是要在网络中传递，所以要对生产的数据K，V进行序列化的操作</span></span><br><span class="line">        configMap.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());</span><br><span class="line">        configMap.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());</span><br><span class="line"></span><br><span class="line">        <span class="comment">// TODO 创建生产者对象</span></span><br><span class="line">        <span class="comment">//   生产者对象需要指定泛型：数据的类型约束   生产者生产的数据实际是K-V类型</span></span><br><span class="line">        KafkaProducer&lt;String, String&gt; producer = <span class="keyword">new</span> <span class="title class_">KafkaProducer</span>&lt;&gt;(configMap);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// TODO 创建数据</span></span><br><span class="line">        <span class="comment">//      构建数据传递三个参数</span></span><br><span class="line">        <span class="comment">//       第一个表示传递的主题（Topic）名称（如果之前不存在，则会自动创建）：</span></span><br><span class="line">        <span class="comment">//       第二个表示数据的Key：</span></span><br><span class="line">        <span class="comment">//       第三个表示数据的Value：</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">10</span>; i++)&#123;   <span class="comment">// 创建10个数据，发送至Kafka</span></span><br><span class="line">            ProducerRecord&lt;String, String&gt; record = <span class="keyword">new</span> <span class="title class_">ProducerRecord</span>&lt;&gt;(</span><br><span class="line">                    <span class="string">&quot;test&quot;</span>, <span class="string">&quot;key&quot;</span> + i, <span class="string">&quot;value&quot;</span> + i</span><br><span class="line">            );</span><br><span class="line">            <span class="comment">// TODO 通过生产者对象将数据发送到Kafka</span></span><br><span class="line">            producer.send(record);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// TODO 关闭生产者对象</span></span><br><span class="line">        producer.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">KafkaConsumerTest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="comment">// TODO 创建配置对象</span></span><br><span class="line">        Map&lt;String, Object&gt; consumerConfig = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">        consumerConfig.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, <span class="string">&quot;localhost:9092&quot;</span>);</span><br><span class="line">        <span class="comment">// TODO 反序列化</span></span><br><span class="line">        consumerConfig.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());</span><br><span class="line">        consumerConfig.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());</span><br><span class="line"></span><br><span class="line">        consumerConfig.put(ConsumerConfig.GROUP_ID_CONFIG, <span class="string">&quot;xiweix&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// TODO 创建消费者对象</span></span><br><span class="line">        KafkaConsumer&lt;String, String&gt; consumer = <span class="keyword">new</span> <span class="title class_">KafkaConsumer</span>&lt;&gt;(consumerConfig);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// TODO 订阅主题（Topic）</span></span><br><span class="line">        consumer.subscribe(Collections.singletonList(<span class="string">&quot;test&quot;</span>));</span><br><span class="line"></span><br><span class="line">        <span class="comment">// TODO 从Kafka的主题（Topic）中获取数据</span></span><br><span class="line">        <span class="comment">//      消费者从Kafka中拉取数据</span></span><br><span class="line">        <span class="keyword">while</span> (<span class="literal">true</span>)&#123;</span><br><span class="line">            ConsumerRecords&lt;String, String&gt; datas = consumer.poll(Duration.ofMillis(<span class="number">100</span>));  <span class="comment">// 100ms为超时时间</span></span><br><span class="line">            <span class="keyword">for</span> (ConsumerRecord&lt;String, String&gt; data : datas)&#123;</span><br><span class="line">                System.out.println(data);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//        // TODO 关闭消费者对象</span></span><br><span class="line"><span class="comment">//        consumer.close();</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上述效果与在控制台执行批处理命令所差不多</p>
+<h2 id="5-编译Kafka源码"><a href="#5-编译Kafka源码" class="headerlink" title="5. 编译Kafka源码"></a>5. 编译Kafka源码</h2><h3 id="5-1-下载源码并进行构建"><a href="#5-1-下载源码并进行构建" class="headerlink" title="5.1 下载源码并进行构建"></a>5.1 下载源码并进行构建</h3><p>在官网下载kafka源码解压至目录</p>
+<p><img src="/../images/kafka_7.png"></p>
+<p>kafka3.6.1源码编译需要JDK17和Scala2.13，</p>
+<p>构建需要使用Gradle，Gradle也需要安装并配置</p>
+<p>在源码项目目录下执行</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gradle idea</span><br></pre></td></tr></table></figure>
+
+<p>进行构建</p>
+<p>请注意，如果jetbrains的破解环境变量带有中文会也影响构建，将其删除即可</p>
+<h3 id="5-2-选择scala和配置"><a href="#5-2-选择scala和配置" class="headerlink" title="5.2 选择scala和配置"></a>5.2 选择scala和配置</h3><p>使用IDEA打开源码，安装Scala插件</p>
+<p>在Project Structure（项目结构）中配置全局库，选择指定的Scala包，选择JDK</p>
+<p><img src="/../images/kafka_8.png"></p>
+<p>运行kafka同样需要配置文件，和完整的本地Kafka相同，在server.properties文件中更改log.dirs:</p>
+<p><img src="/../images/kafka_9.png"></p>
+<h3 id="5-3-添加运行配置"><a href="#5-3-添加运行配置" class="headerlink" title="5.3 添加运行配置"></a>5.3 添加运行配置</h3><p>选择应用程序（Application），命名为Kafka</p>
+<p>选择jdk17，选择运行模块为kafka.core.main</p>
+<p>选择其主类为kafka.Kafka</p>
+<p>加上运行实参：配置文件config&#x2F;server.properties</p>
+<p><img src="/../images/kafka_10.png"></p>
+<p>然后运行启动，（启动显示缺少某些类包，可以运行</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gradle clean build</span><br></pre></td></tr></table></figure>
+
+<p><strong>这个不配置，要很久很久时间，可能会在构建各种Test任务（例如，:metadata:test，:raft:test，:clients:test）时会出错，然后显示Failed，但是貌似不影响启动Kafka）</strong></p>
+<p>第一次启动如果没配置国内源，要非常非常久时间，</p>
+<p>配置镜像在build.gradle文件中：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">buildscript&#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">  	mavenLocal()</span><br><span class="line">  	maven&#123; url &#x27;http://maven.aliyun.com/nexus/content/groups/public/&#x27; &#125;</span><br><span class="line">  	maven&#123; url &#x27;http://maven.aliyun.com/nexus/content/repositories/jcenter&#x27;&#125;</span><br><span class="line">  	mavenCentral()</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">allprojects &#123;</span><br><span class="line"></span><br><span class="line">  repositories &#123;</span><br><span class="line">    mavenLocal()</span><br><span class="line"></span><br><span class="line">    maven &#123; url &#x27;https://maven.aliyun.com/repository/public/&#x27; &#125;</span><br><span class="line">    maven &#123; url &#x27;https://maven.aliyun.com/repository/spring/&#x27;&#125;</span><br><span class="line">    maven &#123; url &#x27;https://maven.aliyun.com/repository/google/&#x27;&#125;</span><br><span class="line">    maven &#123; url &#x27;https://maven.aliyun.com/repository/gradle-plugin/&#x27;&#125;</span><br><span class="line">    maven &#123; url &#x27;https://maven.aliyun.com/repository/spring-plugin/&#x27;&#125;</span><br><span class="line">    maven &#123; url &#x27;https://maven.aliyun.com/repository/grails-core/&#x27;&#125;</span><br><span class="line">    maven &#123; url &#x27;https://maven.aliyun.com/repository/apache-snapshots/&#x27;&#125;</span><br><span class="line"></span><br><span class="line">    mavenCentral()</span><br><span class="line">  &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>成功启动后的界面如下：</p>
+<p><img src="/../images/kafka_12.png"></p>
+<p>如果出现：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">Task :streams:streams-scala:spotlessScalaCheck FAILED</span></span><br></pre></td></tr></table></figure>
+
+<p><code>gradle build clean</code> 失败并出现 <code>Task :streams:streams-scala:spotlessScalaCheck FAILED</code> 错误，通常表示在执行 <code>Spotless</code> 插件的 Scala 检查时出现问题。<code>Spotless</code> 插件用于检查代码格式是否符合指定规范，在这里它检查 Scala 代码的格式化是否符合标准。</p>
+<p>Windows下可以运行：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gradle spotlessScalaApply</span><br></pre></td></tr></table></figure>
+
+<p>解决该问题</p>
+<p>请注意，这里运行Kafka，同样要先启动ZooKeeper，在Kafka目录下的zk.cmd双击启动</p>
+<p>否则也会启动失败</p>
+<h2 id="6-Kafka架构介绍"><a href="#6-Kafka架构介绍" class="headerlink" title="6. Kafka架构介绍"></a>6. Kafka架构介绍</h2><p>Kafka可以有多个Producer和Consumer同时进行生产消费，因此只有一个Broker（经纪人）的情况下，可能会产生IO热点问题。</p>
+<h3 id="6-1-IO热点问题"><a href="#6-1-IO热点问题" class="headerlink" title="6.1 IO热点问题"></a>6.1 IO热点问题</h3><p>I&#x2F;O热点问题（I&#x2F;O bottleneck）指的是在计算机系统中，输入&#x2F;输出操作（I&#x2F;O操作）成为性能瓶颈的情况。当系统需要频繁读取或写入磁盘、网络或其他外部设备的数据时，如果I&#x2F;O的速度跟不上CPU或内存的速度，就会导致系统的整体性能下降。这种情况通常被称为I&#x2F;O热点。</p>
+<p>I&#x2F;O热点通常出现在以下几种场景：</p>
+<ol>
+<li><strong>磁盘I&#x2F;O瓶颈</strong>：磁盘的读写速度跟不上系统的需求，尤其在进行大量数据存取时。例如，数据库操作、日志写入、大数据处理等。</li>
+<li><strong>网络I&#x2F;O瓶颈</strong>：在分布式系统或需要大量网络通信的应用中，网络的带宽或延迟可能成为瓶颈，导致数据无法及时传输。</li>
+<li><strong>文件系统限制</strong>：某些文件系统可能存在性能问题，尤其是在处理大量小文件或随机访问时，导致I&#x2F;O操作变慢。</li>
+<li><strong>硬件限制</strong>：例如，使用的硬盘较慢（如传统机械硬盘）而不是固态硬盘（SSD），会大大增加I&#x2F;O操作的时间。</li>
+</ol>
+<p>解决I&#x2F;O热点问题的常见方法：</p>
+<ul>
+<li><strong>升级硬件</strong>：使用更快的存储介质（如SSD替代HDD），增加更多的磁盘或网络带宽。</li>
+<li><strong>优化I&#x2F;O操作</strong>：通过缓存、批量处理、异步操作等减少I&#x2F;O的频繁操作。</li>
+<li><strong>负载均衡</strong>：将I&#x2F;O请求分散到多个磁盘、网络或节点上，避免单一设备成为瓶颈。</li>
+<li><strong>数据压缩与去重</strong>：减少需要传输或存储的数据量。</li>
+</ul>
+<h3 id="6-2-横向扩展"><a href="#6-2-横向扩展" class="headerlink" title="6.2 横向扩展"></a>6.2 横向扩展</h3><p><img src="/../images/kafka_13.png"></p>
+<p>使用多个Broker，处理不同Producer和Consumer的请求，<strong>但是如果某个Topic仅存在于某一个Broker</strong>，Producer还是会仅请求其中一个Broker</p>
+<p>因此可以将每个Broker都存放Topic，将消息分放在不同Broker，每个数据块在不同分区，这样就可以同一Topic，使用不同分区（Partition）区分，为了Consumer可以得到一个Topic完整的数据，可以把几个Consumer作为整体-消费者组进行消费</p>
+<p><img src="/../images/kafka_14.png"></p>
+<h3 id="6-3-备份日志"><a href="#6-3-备份日志" class="headerlink" title="6.3 备份日志"></a>6.3 备份日志</h3><p>为了防止某台Broker宕机导致数据丢失，可以采用log进行备份，但是由于本台机器不能使用，所以log也用不了，因此可以把log在其他机器进行备份</p>
+<p><img src="/../images/kafka_15.png"></p>
+<p>为了数据可靠性，可以将数据文件进行备份，但是<strong>Kafka没有备份的概念，Kafka中称之为副本</strong>，</p>
+<p>多个副本同时只能有一个提供数据的读写操作，其他副本只是用于备份</p>
+<p>具有读写能力的副本称之为<strong>Leader副本</strong>，作为备份的副本称之为<strong>Follower副本</strong></p>
+<p>Broker: 服务节点（集群）</p>
+<p>Partition：分区（编号）</p>
+<p>副本： Leader， Follower</p>
+<h3 id="6-4-Kafka的Master"><a href="#6-4-Kafka的Master" class="headerlink" title="6.4 Kafka的Master"></a>6.4 Kafka的Master</h3><p>master宕机，可以采用的方式：</p>
+<p><img src="/../images/kafka_16.png"></p>
+<p>这种方法如果备份也坏掉了，同样不可靠，因此可以采用每个子节点均为待机状态，作为备份，需要通过选举找到最合适的控制器，通过Zookeeper实现</p>
+<p><img src="/../images/kafka_17.png"></p>
+<p>总结：</p>
+<p><img src="/../images/kafka_18.png"></p>
+<h2 id="7-Windows下集群部署"><a href="#7-Windows下集群部署" class="headerlink" title="7. Windows下集群部署"></a>7. Windows下集群部署</h2><h3 id="7-1-创建集群"><a href="#7-1-创建集群" class="headerlink" title="7.1 创建集群"></a>7.1 创建集群</h3><p>在kafka目录下创建cluster（集群）文件夹，将kafka_2.12-3.6.1复制四份，分别为zookeeper，broker1，broker2，broker3</p>
+<p><img src="/../images/kafka_19.png"></p>
+<h3 id="7-2-配置"><a href="#7-2-配置" class="headerlink" title="7.2 配置"></a>7.2 配置</h3><p>类似于上面的配置</p>
+<p>zookeeper配置zookeeper.properties</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dataDir=D:\kafka\cluster\kafka-zookeeper\data</span><br></pre></td></tr></table></figure>
+
+<p>分别对broker1,borker2,broker3进行server.propertites配置</p>
+<p>由于是集群，所以对端口号等进行限制</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">broker.id=1	</span><br><span class="line">		 2</span><br><span class="line">		 3</span><br><span class="line">listeners=PLAINTEXT://:9091</span><br><span class="line">					 9092</span><br><span class="line">					 9092</span><br><span class="line">log.dirs=D:\kafka\cluster\kafka-broker-1\data</span><br><span class="line">								    2</span><br><span class="line">								    3</span><br></pre></td></tr></table></figure>
+
+<h3 id="7-3-创建快速启动脚本"><a href="#7-3-创建快速启动脚本" class="headerlink" title="7.3 创建快速启动脚本"></a>7.3 创建快速启动脚本</h3><p>就是把单机版的zk.cmd在kafka-zookeeper中复制一份</p>
+<p>kfk.cmd在三个broker中复制</p>
+<p>在cluster目录下创建cluster.cmd文件，用于快速启动zookeeper和三个节点，</p>
+<p>cluster.cmd：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">cd kafka-zookeeper</span><br><span class="line">start zk.cmd</span><br><span class="line">ping 127.0.0.1 -n 10 &gt;nul</span><br><span class="line">cd ../kafka-broker-1</span><br><span class="line">start kfk.cmd</span><br><span class="line">cd ../kafka-broker-2</span><br><span class="line">start kfk.cmd</span><br><span class="line">cd ../kafka-broker-3</span><br><span class="line">start kfk.cmd</span><br></pre></td></tr></table></figure>
+
+<p>命令 <code>ping 127.0.0.1 -n 10 &gt;nul</code> 在 Windows 中的含义如下：</p>
+<ul>
+<li><code>ping 127.0.0.1</code>：这是一个 ping 命令，表示测试本机（即本地回环地址 <code>127.0.0.1</code>）的网络连接。<code>127.0.0.1</code> 是指向计算机自身的IP地址，用于测试网络栈和相关的网络功能是否正常。</li>
+<li><code>-n 10</code>：表示发送 10 次 ICMP 回显请求包（即 ping 请求）。如果不加 <code>-n</code> 参数，默认情况下 ping 命令会发送 4 次请求包。</li>
+<li><code>&gt;nul</code>：表示将命令的输出重定向到 <code>nul</code>，即不显示任何输出。<code>nul</code> 是 Windows 中的“空设备”，相当于将输出丢弃掉。这意味着，虽然 ping 命令会发送 10 次请求并执行相关操作，但不会在屏幕上显示任何输出。</li>
+</ul>
+<p>在这里的作用是运行ZooKeeper命令启动后，等待一段时间，防止启动Kafka时ZooKeeper还未启动成功</p>
+<p>创建cluster-clear.cmd文件，用于清除data文件夹</p>
+<p>cluster-clear.cmd:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">cd kafka-zookeeper</span><br><span class="line">rd /s /q data</span><br><span class="line">cd ../kafka-broker-1</span><br><span class="line">rd /s /q data</span><br><span class="line">cd ../kafka-broker-2</span><br><span class="line">rd /s /q data</span><br><span class="line">cd ../kafka-broker-3</span><br><span class="line">rd /s /q data</span><br></pre></td></tr></table></figure>
+
+<p>命令 <code>rd /s /q data</code> 在 Windows 中的含义如下：</p>
+<ul>
+<li><code>rd</code>：表示 “remove directory”（删除目录）的命令，用于删除一个空的或非空的目录。</li>
+<li><code>/s</code>：表示删除指定目录及其中的所有文件和子目录。如果没有使用 <code>/s</code> 参数，<code>rd</code> 只能删除空目录。</li>
+<li><code>/q</code>：表示“静默模式”，即在删除目录时不会提示确认删除操作。如果没有使用 <code>/q</code> 参数，系统会要求用户确认是否删除该目录及其内容。</li>
+<li><code>data</code>：这是要删除的目录名。在这个命令中，<code>data</code> 是指定要删除的目录。</li>
+</ul>
+<p>双击启动时又出现了输入行太长的问题，我们将cluster挪到D盘直接目录下：</p>
+<p>然后修改配置文件就好了</p>
+<p>启动成功后打开四个黑窗口：</p>
+<p><img src="/../images/kafka_20.png"></p>
+<p>注：如果遇到启动Kafka失败，注意运行cluster-clear.cmd文件，用来清除data文件夹，如果遇到clear后仍然不行的情况，可能是由于配置zookeeper.properties文件和server.properties文件时，data地址中使用了”\“,应该使用”&#x2F;“,这时候产生的data文件夹可能为文件目录名称加上data，如：clusterkafka-zookeeperdata，clusterkafka-broker-1data</p>
+<h2 id="8-ZooKeeper原理"><a href="#8-ZooKeeper原理" class="headerlink" title="8. ZooKeeper原理"></a>8. ZooKeeper原理</h2><p><img src="/../images/kafka_21.png"></p>
+<p><img src="/../images/kafka_22.png"></p>
+<p>相关结构可以使用prettyZoo软件进行查看，Kafka的图形化界面操作可以使用Offset Explorer软件</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>Author: </span><span class="post-copyright-info"><a href="https://xi-weix.github.io">XiWei</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>Link: </span><span class="post-copyright-info"><a href="https://xi-weix.github.io/2025/01/15/Kafka%E5%9C%A8Windows%E4%B8%8B%E4%BD%BF%E7%94%A8/">https://xi-weix.github.io/2025/01/15/Kafka%E5%9C%A8Windows%E4%B8%8B%E4%BD%BF%E7%94%A8/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>Copyright Notice: </span><span class="post-copyright-info">All articles on this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless otherwise stated.</span></div></div><div class="tag_share"><div class="post-share"><div class="social-share" data-image="/img/%E9%9B%AA%E8%8A%B1.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/%E9%9B%AA%E8%8A%B1.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">XiWei</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">12</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Xi-WeiX"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Contents</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Kafka%E5%9C%A8Windows%E4%B8%8B%E4%BD%BF%E7%94%A8"><span class="toc-number">1.</span> <span class="toc-text">Kafka在Windows下使用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E4%B8%8B%E8%BD%BD%E5%AE%89%E8%A3%85"><span class="toc-number">1.1.</span> <span class="toc-text">1. 下载安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%90%AF%E5%8A%A8%E8%BD%AF%E4%BB%B6"><span class="toc-number">1.2.</span> <span class="toc-text">2. 启动软件</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B3%A8%E6%84%8F%EF%BC%9A"><span class="toc-number">1.2.0.1.</span> <span class="toc-text">注意：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BF%AB%E9%80%9F%E5%90%AF%E5%8A%A8"><span class="toc-number">1.2.1.</span> <span class="toc-text">快速启动</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%88%9B%E5%BB%BATopics"><span class="toc-number">1.3.</span> <span class="toc-text">3. 创建Topics</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-Java%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85"><span class="toc-number">1.4.</span> <span class="toc-text">4. Java代码实现生产者消费者</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E5%AF%BC%E5%85%A5%E4%BE%9D%E8%B5%96%E5%8C%85"><span class="toc-number">1.4.1.</span> <span class="toc-text">4.1 导入依赖包</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-KafkaProducer%E5%92%8CKafkaConsumer"><span class="toc-number">1.4.2.</span> <span class="toc-text">4.2 KafkaProducer和KafkaConsumer</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E7%BC%96%E8%AF%91Kafka%E6%BA%90%E7%A0%81"><span class="toc-number">1.5.</span> <span class="toc-text">5. 编译Kafka源码</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-%E4%B8%8B%E8%BD%BD%E6%BA%90%E7%A0%81%E5%B9%B6%E8%BF%9B%E8%A1%8C%E6%9E%84%E5%BB%BA"><span class="toc-number">1.5.1.</span> <span class="toc-text">5.1 下载源码并进行构建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-%E9%80%89%E6%8B%A9scala%E5%92%8C%E9%85%8D%E7%BD%AE"><span class="toc-number">1.5.2.</span> <span class="toc-text">5.2 选择scala和配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-%E6%B7%BB%E5%8A%A0%E8%BF%90%E8%A1%8C%E9%85%8D%E7%BD%AE"><span class="toc-number">1.5.3.</span> <span class="toc-text">5.3 添加运行配置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-Kafka%E6%9E%B6%E6%9E%84%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.6.</span> <span class="toc-text">6. Kafka架构介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-IO%E7%83%AD%E7%82%B9%E9%97%AE%E9%A2%98"><span class="toc-number">1.6.1.</span> <span class="toc-text">6.1 IO热点问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-%E6%A8%AA%E5%90%91%E6%89%A9%E5%B1%95"><span class="toc-number">1.6.2.</span> <span class="toc-text">6.2 横向扩展</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-3-%E5%A4%87%E4%BB%BD%E6%97%A5%E5%BF%97"><span class="toc-number">1.6.3.</span> <span class="toc-text">6.3 备份日志</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-4-Kafka%E7%9A%84Master"><span class="toc-number">1.6.4.</span> <span class="toc-text">6.4 Kafka的Master</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-Windows%E4%B8%8B%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2"><span class="toc-number">1.7.</span> <span class="toc-text">7. Windows下集群部署</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#7-1-%E5%88%9B%E5%BB%BA%E9%9B%86%E7%BE%A4"><span class="toc-number">1.7.1.</span> <span class="toc-text">7.1 创建集群</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-2-%E9%85%8D%E7%BD%AE"><span class="toc-number">1.7.2.</span> <span class="toc-text">7.2 配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-3-%E5%88%9B%E5%BB%BA%E5%BF%AB%E9%80%9F%E5%90%AF%E5%8A%A8%E8%84%9A%E6%9C%AC"><span class="toc-number">1.7.3.</span> <span class="toc-text">7.3 创建快速启动脚本</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-ZooKeeper%E5%8E%9F%E7%90%86"><span class="toc-number">1.8.</span> <span class="toc-text">8. ZooKeeper原理</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Posts</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/01/15/Kafka%E5%9C%A8Windows%E4%B8%8B%E4%BD%BF%E7%94%A8/" title="Kafka在Windows下使用">Kafka在Windows下使用</a><time datetime="2025-01-15T15:30:56.000Z" title="Created 2025-01-15 23:30:56">2025-01-15</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/01/15/%E7%94%B5%E4%BF%A1%E5%A4%A7%E6%95%B0%E6%8D%AE%E9%A1%B9%E7%9B%AE/" title="电信大数据项目">电信大数据项目</a><time datetime="2025-01-15T06:06:18.000Z" title="Created 2025-01-15 14:06:18">2025-01-15</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/01/14/%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E4%B9%8BHBase%E3%80%81Phoenix/" title="大数据技术之HBase、Phoenix">大数据技术之HBase、Phoenix</a><time datetime="2025-01-14T13:20:00.000Z" title="Created 2025-01-14 21:20:00">2025-01-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/01/14/HBase%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/" title="HBase安装配置">HBase安装配置</a><time datetime="2025-01-14T13:15:32.000Z" title="Created 2025-01-14 21:15:32">2025-01-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/01/14/%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF%E4%B9%8BZooKeeper/" title="大数据技术之ZooKeeper">大数据技术之ZooKeeper</a><time datetime="2025-01-14T13:09:08.000Z" title="Created 2025-01-14 21:09:08">2025-01-14</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2025 By XiWei</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Reading Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Toggle Between Light and Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle Between Single-column and Double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Settings"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back to Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
